@@ -1,0 +1,15 @@
+body {
+	background-image: url(../images/paper.jpg);
+}
+.jumbotron {
+	background-color: tan;
+	box-shadow: 2px 2px 2px black;
+}
+h1 {
+	font-family: Courier;
+	margin: auto;
+	width: 85%;
+}
+.panel-warning {
+	box-shadow: 2px 2px 2px black;
+}
