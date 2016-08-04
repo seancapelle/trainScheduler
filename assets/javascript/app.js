@@ -31,21 +31,23 @@ $('button').on('click', function(){
 	//RESET BUTTON?
 });
 
-//Calculate train's next arrival and how far it is
+//Calculate train's next arrival and how far away it is
 var timeCalc = function() {
 
+	//Retrieve localStorage data
 	var firstTimeCalc = localStorage.getItem("first-time");
+	var frequencyCalc = localStorage.getItem("train-frequency");
+
+	//Use moment.js to pull current time
 	var currentTime = moment().format("MM/DD/YY hh:mm A");
-
-	console.log(currentTime);
-
-	console.log(firstTimeCalc);
 	
-
-	nextArrival = 1200;
+	//Determine nextArrival
+	nextArrival = moment(currentTime).format("hh:mm");
 	
-	minutesAway = 0;
+	//Determine minutesAway
+	minutesAway = moment(currentTime).diff( frequencyCalc, "minutes");
 
+	//Calls update function
 	updateDisplay();
 
 };
@@ -57,5 +59,3 @@ var updateDisplay = function() {
 	$('.table').append('<tr>' + '<td>' + trainName  + '<td>' + destination + '<td>' + frequency + '<td>' + nextArrival + '<td>' + minutesAway + '</tr>');
 
 };
-
-//
