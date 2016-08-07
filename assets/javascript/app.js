@@ -42,10 +42,11 @@ var timeCalc = function() {
 	var currentTime = moment().format("MM/DD/YY hh:mm A");
 	
 	//Determine nextArrival
-	nextArrival = moment(currentTime).format("hh:mm");
+	//nextArrival = moment(currentTime).format("hh:mm");
 	
 	//Determine minutesAway
-	minutesAway = moment(currentTime).diff( frequencyCalc, "minutes");
+	//minutesAway = moment(currentTime).diff(frequencyCalc, "minutes");
+	//minutesAway = currentTime - nextArrival
 
 	//Calls update function
 	updateDisplay();
