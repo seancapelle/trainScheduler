@@ -1,62 +1,62 @@
-//Variables
-//User input
-var trainName = '';
-var destination = '';
-var firstTime = 0;
-var frequency = 0;
-
-//moment.js input
-var nextArrival = 0;
-var minutesAway = 0;
 
 //Functions
-//Submit button clicked
-$('button').on('click', function(){
-
-	//Grab input value and set to variables
-	trainName = $('#train-name').val().trim();
-	destination = $('#destination').val().trim();
-	firstTime = $('#first-time').val();
-	frequency = $('#frequency').val();
-
-	//Add variables to localStorage
-	localStorage.setItem("train-name", trainName);
-	localStorage.setItem("train-destination", destination);
-	localStorage.setItem("first-time", firstTime);
-	localStorage.setItem("train-frequency", frequency);
-
-	timeCalc();
-	
-	//Clear input
-	//RESET BUTTON?
-});
-
 //Calculate train's next arrival and how far away it is
-var timeCalc = function() {
+var timeCalc = function(firstTime, frequency) {
 
-	//Retrieve localStorage data
-	var firstTimeCalc = localStorage.getItem("first-time");
-	var frequencyCalc = localStorage.getItem("train-frequency");
+	var firstMoment = moment(firstTime, "hh:mm");
 
-	//Use moment.js to pull current time
-	var currentTime = moment().format("MM/DD/YY hh:mm A");
-	
-	//Determine nextArrival
-	//nextArrival = moment(currentTime).format("hh:mm");
-	
-	//Determine minutesAway
-	//minutesAway = moment(currentTime).diff(frequencyCalc, "minutes");
-	//minutesAway = currentTime - nextArrival
+	var currentMoment = moment();
 
-	//Calls update function
-	updateDisplay();
+	var totalRunTime = currentMoment.diff(firstMoment, "minutes");
+
+	var numberOfRuns = Math.floor(totalRunTime / frequency);
+
+	var lastRunMoment = firstMoment.add(numberOfRuns * frequency, "minutes");
+
+	var nextRunMoment = lastRunMoment.add(frequency, "minutes");
+
+	return {
+
+		nextArrival: nextRunMoment.format('hh:mm A'),
+		minutesAway: nextRunMoment.from(currentMoment, "minutes")
+	}
 
 };
 
 //Displays info on table
-var updateDisplay = function() {
+var updateDisplay = function(trainName, destination, firstTime, frequency) {
+
+	var future = timeCalc(firstTime, frequency);
 
 	//Display input in table
-	$('.table').append('<tr>' + '<td>' + trainName  + '<td>' + destination + '<td>' + frequency + '<td>' + nextArrival + '<td>' + minutesAway + '</tr>');
+	$('.table').append('<tr>' + '<td>' + trainName  + '<td>' + destination + '<td>' + frequency + '<td>' + future.nextArrival + '<td>' + future.minutesAway + '</tr>');
 
 };
+
+var currentSchedule = JSON.parse(localStorage.getItem('currentSchedule')) || []
+
+for (i = 0; i < currentSchedule.length; i++) {
+
+	var line = currentSchedule[i];
+
+	updateDisplay(line.trainName, line.destination, line.firstTime, line.frequency);
+}
+
+//Submit button clicked
+$('button').on('click', function(){
+
+	//Grab input value and create schedule object
+	var schedule = {
+		trainName: $('#train-name').val().trim(),
+		destination: $('#destination').val().trim(),
+		firstTime: $('#first-time').val(),
+		frequency: $('#frequency').val(),
+	}	
+
+	currentSchedule.push(schedule);
+
+	localStorage.setItem('currentSchedule', JSON.stringify(currentSchedule));
+
+	updateDisplay(schedule.trainName, schedule.destination, schedule.firstTime, schedule.frequency);
+
+});
